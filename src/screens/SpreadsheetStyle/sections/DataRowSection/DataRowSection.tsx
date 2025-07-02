@@ -3,6 +3,12 @@ import { Button } from "../../../../components/ui/button";
 export const DataRowSection = (): JSX.Element => {
   const handleButtonClick = (action: string, data?: unknown) => {
     console.log(`DataRow button clicked: ${action}`, data);
+    
+    // Special handling for hide fields - this would integrate with the DataTableSection
+    if (action === "hide fields") {
+      // This would typically be handled by a parent component or context
+      console.log("Opening column visibility panel...");
+    }
   };
 
   // Define toolbar actions for mapping

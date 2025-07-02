@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 interface TableRow {
   id: number;
@@ -11,6 +11,13 @@ interface TableRow {
   priority: { label: string; type: string };
   dueDate: string;
   estValue: string;
+}
+
+interface ColumnConfig {
+  id: string;
+  width: number;
+  visible: boolean;
+  minWidth: number;
 }
 
 /*
@@ -31,6 +38,19 @@ export const DataTableSection = (): JSX.Element => {
     row: number;
     column: string;
   } | null>(null);
+
+  // Column configuration for resize/hide functionality
+  const [columnConfigs, setColumnConfigs] = useState<ColumnConfig[]>([
+    { id: "jobRequest", width: 256, visible: true, minWidth: 120 },
+    { id: "submitted", width: 124, visible: true, minWidth: 80 },
+    { id: "status", width: 124, visible: true, minWidth: 80 },
+    { id: "submitter", width: 124, visible: true, minWidth: 80 },
+    { id: "url", width: 124, visible: true, minWidth: 80 },
+    { id: "assigned", width: 124, visible: true, minWidth: 80 },
+    { id: "priority", width: 126, visible: true, minWidth: 80 },
+    { id: "dueDate", width: 125, visible: true, minWidth: 80 },
+    { id: "estValue", width: 124, visible: true, minWidth: 80 },
+  ]);
 
   // Row numbers data
   const rowNumbers = Array.from({ length: 25 }, (_, i) => i + 1);
@@ -153,6 +173,92 @@ export const DataTableSection = (): JSX.Element => {
     }
   }, []);
 
+  // Keyboard navigation functionality
+  const getVisibleColumns = useCallback(() => {
+    return columnConfigs.filter(col => col.visible).map(col => col.id);
+  }, [columnConfigs]);
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (!selectedCell) return;
+
+    const visibleColumns = getVisibleColumns();
+    const currentColIndex = visibleColumns.indexOf(selectedCell.column);
+    
+    switch (event.key) {
+      case "ArrowUp":
+        event.preventDefault();
+        if (selectedCell.row > 0) {
+          setSelectedCell(prev => prev ? { ...prev, row: prev.row - 1 } : null);
+        }
+        break;
+      case "ArrowDown":
+        event.preventDefault();
+        if (selectedCell.row < tableData.length - 1) {
+          setSelectedCell(prev => prev ? { ...prev, row: prev.row + 1 } : null);
+        }
+        break;
+      case "ArrowLeft":
+        event.preventDefault();
+        if (currentColIndex > 0) {
+          setSelectedCell(prev => prev ? { ...prev, column: visibleColumns[currentColIndex - 1] } : null);
+        }
+        break;
+      case "ArrowRight":
+        event.preventDefault();
+        if (currentColIndex < visibleColumns.length - 1) {
+          setSelectedCell(prev => prev ? { ...prev, column: visibleColumns[currentColIndex + 1] } : null);
+        }
+        break;
+      case "Enter":
+        event.preventDefault();
+        if (selectedCell) {
+          handleCellDoubleClick(selectedCell.row, selectedCell.column);
+        }
+        break;
+      case "Escape":
+        event.preventDefault();
+        setSelectedCell(null);
+        break;
+    }
+  }, [selectedCell, tableData.length, getVisibleColumns, handleCellDoubleClick]);
+
+  // Add keyboard event listeners
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  // Column resize functionality
+  const handleColumnResize = useCallback((columnId: string, newWidth: number) => {
+    setColumnConfigs(prev => 
+      prev.map(col => 
+        col.id === columnId 
+          ? { ...col, width: Math.max(newWidth, col.minWidth) }
+          : col
+      )
+    );
+    console.log(`Column ${columnId} resized to ${newWidth}px`);
+  }, []);
+
+  // Column hide/show functionality
+  const toggleColumnVisibility = useCallback((columnId: string) => {
+    setColumnConfigs(prev => 
+      prev.map(col => 
+        col.id === columnId 
+          ? { ...col, visible: !col.visible }
+          : col
+      )
+    );
+    console.log(`Column ${columnId} visibility toggled`);
+  }, []);
+
+  // Get column configuration
+  const getColumnConfig = useCallback((columnId: string) => {
+    return columnConfigs.find(col => col.id === columnId);
+  }, [columnConfigs]);
+
   // Handle button clicks with console logging
   const handleButtonClick = useCallback((action: string, data?: unknown) => {
     console.log(`Button clicked: ${action}`, data);
@@ -190,6 +296,36 @@ export const DataTableSection = (): JSX.Element => {
 
   return (
     <div className="flex h-[872px] items-start gap-px relative self-stretch w-full z-[1] bg-[#f6f6f6] overflow-hidden">
+      {/* Keyboard navigation instructions */}
+      {selectedCell && (
+        <div className="absolute top-2 left-2 z-50 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+          ↑↓←→ Navigate | Enter: Edit | Esc: Deselect | Double-click: Edit
+        </div>
+      )}
+      
+      {/* Column visibility panel */}
+      <div className="absolute top-12 left-2 z-40 bg-white border rounded shadow-lg p-2 text-xs">
+        <div className="font-semibold mb-2">Column Visibility</div>
+        {columnConfigs.map(col => (
+          <div key={col.id} className="flex items-center gap-2 mb-1">
+            <input 
+              type="checkbox" 
+              checked={col.visible}
+              onChange={() => toggleColumnVisibility(col.id)}
+              className="w-3 h-3"
+            />
+            <span className={col.visible ? "text-black" : "text-gray-400"}>
+              {col.id.charAt(0).toUpperCase() + col.id.slice(1)}
+            </span>
+            <span className="text-gray-400 ml-auto">{col.width}px</span>
+          </div>
+        ))}
+        <div className="text-xs text-gray-500 mt-2">
+          Hover column headers to see hide buttons<br/>
+          Drag column edges to resize
+        </div>
+      </div>
+      
       {/* Row numbers column */}
       <div className="w-8 self-stretch flex flex-col items-start gap-px relative">
         <div className="relative self-stretch w-full h-8 bg-white" />
@@ -235,111 +371,183 @@ export const DataTableSection = (): JSX.Element => {
         </div>
 
         {/* Job Request Column */}
-        <div className="w-64 self-stretch z-[3] flex flex-col items-start gap-px relative">
-          <div className="relative self-stretch w-full h-8 bg-white" />
-          <div className="flex h-8 items-center gap-1 pl-2 pr-1 py-0 relative self-stretch w-full bg-[#eeeeee]">
-            <div className="gap-1 flex-1 grow flex items-center relative">
-              <img
-                className="relative w-4 h-4"
-                alt="Briefcase"
-                src="https://c.animaapp.com/mclmkdkf288FZk/img/briefcase.svg"
-              />
-              <div className="relative flex-1 mt-[-1.00px] font-paragraph-12-XS-semi-bold-12-16 font-[number:var(--paragraph-12-XS-semi-bold-12-16-font-weight)] text-[#757575] text-[length:var(--paragraph-12-XS-semi-bold-12-16-font-size)] tracking-[var(--paragraph-12-XS-semi-bold-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-semi-bold-12-16-line-height)] [font-style:var(--paragraph-12-XS-semi-bold-12-16-font-style)]">
-                Job Request
+        {getColumnConfig("jobRequest")?.visible && (
+          <div 
+            className="self-stretch z-[3] flex flex-col items-start gap-px relative group"
+            style={{ width: `${getColumnConfig("jobRequest")?.width}px` }}
+          >
+            <div className="relative self-stretch w-full h-8 bg-white" />
+            <div className="flex h-8 items-center gap-1 pl-2 pr-1 py-0 relative self-stretch w-full bg-[#eeeeee]">
+              <div className="gap-1 flex-1 grow flex items-center relative">
+                <img
+                  className="relative w-4 h-4"
+                  alt="Briefcase"
+                  src="https://c.animaapp.com/mclmkdkf288FZk/img/briefcase.svg"
+                />
+                <div className="relative flex-1 mt-[-1.00px] font-paragraph-12-XS-semi-bold-12-16 font-[number:var(--paragraph-12-XS-semi-bold-12-16-font-weight)] text-[#757575] text-[length:var(--paragraph-12-XS-semi-bold-12-16-font-size)] tracking-[var(--paragraph-12-XS-semi-bold-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-semi-bold-12-16-line-height)] [font-style:var(--paragraph-12-XS-semi-bold-12-16-font-style)]">
+                  Job Request
+                </div>
+                <button 
+                  className="text-xs px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleColumnVisibility("jobRequest")}
+                  title="Hide column"
+                >
+                  ×
+                </button>
               </div>
+              <button 
+                className="inline-flex items-center gap-2 p-1 relative flex-[0_0_auto] rounded hover:bg-gray-100"
+                onClick={() => handleButtonClick("sort", "jobRequest")}
+              >
+                <img
+                  className="relative w-3 h-3"
+                  alt="Chevron"
+                  src="https://c.animaapp.com/mclmkdkf288FZk/img/chevron.svg"
+                />
+              </button>
             </div>
-            <button 
-              className="inline-flex items-center gap-2 p-1 relative flex-[0_0_auto] rounded hover:bg-gray-100"
-              onClick={() => handleButtonClick("sort", "jobRequest")}
-            >
-              <img
-                className="relative w-3 h-3"
-                alt="Chevron"
-                src="https://c.animaapp.com/mclmkdkf288FZk/img/chevron.svg"
-              />
-            </button>
-          </div>
-
-          {tableData.map((row, index) => (
-            <div
-              key={`job-${index}`}
-              className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
-                selectedCell?.row === index && selectedCell?.column === "jobRequest"
-                  ? "bg-blue-100 ring-2 ring-blue-500"
-                  : "bg-white"
-              }`}
-              onClick={() => handleCellClick(index, "jobRequest")}
-              onDoubleClick={() => handleCellDoubleClick(index, "jobRequest")}
-            >
-              <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
-                {row.jobRequest}
-              </div>
-            </div>
-          ))}
-
-          {/* Empty rows */}
-          {Array.from({ length: 20 }, (_, i) => (
-            <div
-              key={`empty-job-${i}`}
-              className="relative self-stretch w-full h-8 bg-white"
+            
+            {/* Resize handle */}
+            <div 
+              className="absolute top-0 right-0 w-1 h-full cursor-col-resize bg-transparent hover:bg-blue-300 z-10"
+              onMouseDown={(e) => {
+                const startX = e.clientX;
+                const startWidth = getColumnConfig("jobRequest")?.width || 256;
+                
+                const handleMouseMove = (e: MouseEvent) => {
+                  const diff = e.clientX - startX;
+                  const newWidth = startWidth + diff;
+                  handleColumnResize("jobRequest", newWidth);
+                };
+                
+                const handleMouseUp = () => {
+                  document.removeEventListener("mousemove", handleMouseMove);
+                  document.removeEventListener("mouseup", handleMouseUp);
+                };
+                
+                document.addEventListener("mousemove", handleMouseMove);
+                document.addEventListener("mouseup", handleMouseUp);
+              }}
+              title="Resize column"
             />
-          ))}
-        </div>
+
+            {tableData.map((row, index) => (
+              <div
+                key={`job-${index}`}
+                className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
+                  selectedCell?.row === index && selectedCell?.column === "jobRequest"
+                    ? "bg-blue-100 border-2 border-blue-500"
+                    : "bg-white"
+                }`}
+                onClick={() => handleCellClick(index, "jobRequest")}
+                onDoubleClick={() => handleCellDoubleClick(index, "jobRequest")}
+              >
+                <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
+                  {row.jobRequest}
+                </div>
+              </div>
+            ))}
+
+            {/* Empty rows */}
+            {Array.from({ length: 20 }, (_, i) => (
+              <div
+                key={`empty-job-${i}`}
+                className="relative self-stretch w-full h-8 bg-white"
+              />
+            ))}
+          </div>
+        )}
 
         {/* Submitted Column */}
-        <div className="w-[124px] self-stretch z-[2] flex flex-col items-start gap-px relative">
-          <div className="relative self-stretch w-full h-8 bg-white" />
-          <div className="flex h-8 items-center gap-1 pl-2 pr-1 py-0 relative self-stretch w-full bg-[#eeeeee]">
-            <div className="gap-1 flex-1 grow flex items-center relative">
-              <img
-                className="relative w-4 h-4"
-                alt="Calendar"
-                src="https://c.animaapp.com/mclmkdkf288FZk/img/calendar.svg"
-              />
-              <div className="relative flex-1 mt-[-1.00px] font-paragraph-12-XS-semi-bold-12-16 font-[number:var(--paragraph-12-XS-semi-bold-12-16-font-weight)] text-[#757575] text-[length:var(--paragraph-12-XS-semi-bold-12-16-font-size)] tracking-[var(--paragraph-12-XS-semi-bold-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-semi-bold-12-16-line-height)] [font-style:var(--paragraph-12-XS-semi-bold-12-16-font-style)]">
-                Submitted
+        {getColumnConfig("submitted")?.visible && (
+          <div 
+            className="self-stretch z-[2] flex flex-col items-start gap-px relative group"
+            style={{ width: `${getColumnConfig("submitted")?.width}px` }}
+          >
+            <div className="relative self-stretch w-full h-8 bg-white" />
+            <div className="flex h-8 items-center gap-1 pl-2 pr-1 py-0 relative self-stretch w-full bg-[#eeeeee]">
+              <div className="gap-1 flex-1 grow flex items-center relative">
+                <img
+                  className="relative w-4 h-4"
+                  alt="Calendar"
+                  src="https://c.animaapp.com/mclmkdkf288FZk/img/calendar.svg"
+                />
+                <div className="relative flex-1 mt-[-1.00px] font-paragraph-12-XS-semi-bold-12-16 font-[number:var(--paragraph-12-XS-semi-bold-12-16-font-weight)] text-[#757575] text-[length:var(--paragraph-12-XS-semi-bold-12-16-font-size)] tracking-[var(--paragraph-12-XS-semi-bold-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-semi-bold-12-16-line-height)] [font-style:var(--paragraph-12-XS-semi-bold-12-16-font-style)]">
+                  Submitted
+                </div>
+                <button 
+                  className="text-xs px-1 py-0.5 bg-gray-200 hover:bg-gray-300 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleColumnVisibility("submitted")}
+                  title="Hide column"
+                >
+                  ×
+                </button>
               </div>
+              <button 
+                className="inline-flex items-center gap-2 p-1 relative flex-[0_0_auto] rounded hover:bg-gray-100"
+                onClick={() => handleButtonClick("sort", "submitted")}
+              >
+                <img
+                  className="relative w-3 h-3"
+                  alt="Chevron"
+                  src="https://c.animaapp.com/mclmkdkf288FZk/img/chevron.svg"
+                />
+              </button>
             </div>
-            <button 
-              className="inline-flex items-center gap-2 p-1 relative flex-[0_0_auto] rounded hover:bg-gray-100"
-              onClick={() => handleButtonClick("sort", "submitted")}
-            >
-              <img
-                className="relative w-3 h-3"
-                alt="Chevron"
-                src="https://c.animaapp.com/mclmkdkf288FZk/img/chevron.svg"
-              />
-            </button>
-          </div>
-
-          {tableData.map((row, index) => (
-            <div
-              key={`submitted-${index}`}
-              className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
-                selectedCell?.row === index && selectedCell?.column === "submitted"
-                  ? "bg-blue-100 ring-2 ring-blue-500"
-                  : "bg-white"
-              }`}
-              onClick={() => handleCellClick(index, "submitted")}
-            >
-              <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] text-right tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
-                {row.submitted}
-              </div>
-            </div>
-          ))}
-
-          {/* Empty rows with one highlighted */}
-          <div className="relative self-stretch w-full h-8 bg-white" />
-          <div className="relative self-stretch w-full h-8 bg-white" />
-          <div className="relative self-stretch w-full h-8 bg-white border border-solid border-[#6b8b6f] shadow-[0px_0px_12px_#0a6e3d38,0px_0px_4px_-2px_#0a6d3c99]" />
-
-          {Array.from({ length: 17 }, (_, i) => (
-            <div
-              key={`empty-submitted-${i}`}
-              className="relative self-stretch w-full h-8 bg-white"
+            
+            {/* Resize handle */}
+            <div 
+              className="absolute top-0 right-0 w-1 h-full cursor-col-resize bg-transparent hover:bg-blue-300 z-10"
+              onMouseDown={(e) => {
+                const startX = e.clientX;
+                const startWidth = getColumnConfig("submitted")?.width || 124;
+                
+                const handleMouseMove = (e: MouseEvent) => {
+                  const diff = e.clientX - startX;
+                  const newWidth = startWidth + diff;
+                  handleColumnResize("submitted", newWidth);
+                };
+                
+                const handleMouseUp = () => {
+                  document.removeEventListener("mousemove", handleMouseMove);
+                  document.removeEventListener("mouseup", handleMouseUp);
+                };
+                
+                document.addEventListener("mousemove", handleMouseMove);
+                document.addEventListener("mouseup", handleMouseUp);
+              }}
+              title="Resize column"
             />
-          ))}
-        </div>
+
+            {tableData.map((row, index) => (
+              <div
+                key={`submitted-${index}`}
+                className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
+                  selectedCell?.row === index && selectedCell?.column === "submitted"
+                    ? "bg-blue-100 border-2 border-blue-500"
+                    : "bg-white"
+                }`}
+                onClick={() => handleCellClick(index, "submitted")}
+              >
+                <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size] text-right tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
+                  {row.submitted}
+                </div>
+              </div>
+            ))}
+
+            {/* Empty rows with one highlighted */}
+            <div className="relative self-stretch w-full h-8 bg-white" />
+            <div className="relative self-stretch w-full h-8 bg-white" />
+            <div className="relative self-stretch w-full h-8 bg-white border border-solid border-[#6b8b6f] shadow-[0px_0px_12px_#0a6e3d38,0px_0px_4px_-2px_#0a6d3c99]" />
+
+            {Array.from({ length: 17 }, (_, i) => (
+              <div
+                key={`empty-submitted-${i}`}
+                className="relative self-stretch w-full h-8 bg-white"
+              />
+            ))}
+          </div>
+        )}
 
         {/* Status Column */}
         <div className="w-[124px] self-stretch z-[1] flex flex-col items-start gap-px relative">
@@ -372,7 +580,7 @@ export const DataTableSection = (): JSX.Element => {
               key={`status-${index}`}
               className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
                 selectedCell?.row === index && selectedCell?.column === "status"
-                  ? "bg-blue-100 ring-2 ring-blue-500"
+                  ? "bg-blue-100 border-2 border-blue-500"
                   : "bg-white"
               }`}
               onClick={() => handleCellClick(index, "status")}
@@ -431,7 +639,7 @@ export const DataTableSection = (): JSX.Element => {
               key={`submitter-${index}`}
               className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
                 selectedCell?.row === index && selectedCell?.column === "submitter"
-                  ? "bg-blue-100 ring-2 ring-blue-500"
+                  ? "bg-blue-100 border-2 border-blue-500"
                   : "bg-white"
               }`}
               onClick={() => handleCellClick(index, "submitter")}
@@ -483,7 +691,7 @@ export const DataTableSection = (): JSX.Element => {
             key={`url-${index}`}
             className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
               selectedCell?.row === index && selectedCell?.column === "url"
-                ? "bg-blue-100 ring-2 ring-blue-500"
+                ? "bg-blue-100 border-2 border-blue-500"
                 : "bg-white"
             }`}
             onClick={() => handleCellClick(index, "url")}
@@ -557,7 +765,7 @@ export const DataTableSection = (): JSX.Element => {
             key={`assigned-${index}`}
             className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
               selectedCell?.row === index && selectedCell?.column === "assigned"
-                ? "bg-blue-100 ring-2 ring-blue-500"
+                ? "bg-blue-100 border-2 border-blue-500"
                 : "bg-white"
             }`}
             onClick={() => handleCellClick(index, "assigned")}
@@ -623,7 +831,7 @@ export const DataTableSection = (): JSX.Element => {
                 key={`priority-${index}`}
                 className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
                   selectedCell?.row === index && selectedCell?.column === "priority"
-                    ? "bg-blue-100 ring-2 ring-blue-500"
+                    ? "bg-blue-100 border-2 border-blue-500"
                     : "bg-white"
                 }`}
                 onClick={() => handleCellClick(index, "priority")}
@@ -664,7 +872,7 @@ export const DataTableSection = (): JSX.Element => {
                 key={`dueDate-${index}`}
                 className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
                   selectedCell?.row === index && selectedCell?.column === "dueDate"
-                    ? "bg-blue-100 ring-2 ring-blue-500"
+                    ? "bg-blue-100 border-2 border-blue-500"
                     : "bg-white"
                 }`}
                 onClick={() => handleCellClick(index, "dueDate")}
@@ -730,7 +938,7 @@ export const DataTableSection = (): JSX.Element => {
               key={`estValue-${index}`}
               className={`flex h-8 items-center justify-center gap-1 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
                 selectedCell?.row === index && selectedCell?.column === "estValue"
-                  ? "bg-blue-100 ring-2 ring-blue-500"
+                  ? "bg-blue-100 border-2 border-blue-500"
                   : "bg-white"
               }`}
               onClick={() => handleCellClick(index, "estValue")}
