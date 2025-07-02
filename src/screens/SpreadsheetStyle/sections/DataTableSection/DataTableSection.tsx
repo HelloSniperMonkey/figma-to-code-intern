@@ -414,19 +414,27 @@ export const DataTableSection = (): JSX.Element => {
                 Submitter
               </div>
             </div>
-            <div className="inline-flex items-center gap-2 p-1 relative flex-[0_0_auto] rounded">
+            <button 
+              className="inline-flex items-center gap-2 p-1 relative flex-[0_0_auto] rounded hover:bg-gray-100"
+              onClick={() => handleButtonClick("sort", "submitter")}
+            >
               <img
                 className="relative w-3 h-3"
                 alt="Chevron"
                 src="https://c.animaapp.com/mclmkdkf288FZk/img/chevron.svg"
               />
-            </div>
+            </button>
           </div>
 
           {tableData.map((row, index) => (
             <div
               key={`submitter-${index}`}
-              className="flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full bg-white"
+              className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
+                selectedCell?.row === index && selectedCell?.column === "submitter"
+                  ? "bg-blue-100 ring-2 ring-blue-500"
+                  : "bg-white"
+              }`}
+              onClick={() => handleCellClick(index, "submitter")}
             >
               <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
                 {row.submitter}
@@ -458,23 +466,37 @@ export const DataTableSection = (): JSX.Element => {
               URL
             </div>
           </div>
-          <div className="inline-flex items-center gap-2 p-1 relative flex-[0_0_auto] rounded">
+          <button 
+            className="inline-flex items-center gap-2 p-1 relative flex-[0_0_auto] rounded hover:bg-gray-100"
+            onClick={() => handleButtonClick("sort", "url")}
+          >
             <img
               className="relative w-3 h-3"
               alt="Chevron"
               src="https://c.animaapp.com/mclmkdkf288FZk/img/chevron.svg"
             />
-          </div>
+          </button>
         </div>
 
         {tableData.map((row, index) => (
           <div
             key={`url-${index}`}
-            className="flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full bg-white"
+            className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
+              selectedCell?.row === index && selectedCell?.column === "url"
+                ? "bg-blue-100 ring-2 ring-blue-500"
+                : "bg-white"
+            }`}
+            onClick={() => handleCellClick(index, "url")}
           >
-            <div className="relative flex-1 [font-family:'Work_Sans',Helvetica] font-normal text-[#121212] text-xs tracking-[0] leading-4 underline">
+            <button
+              className="relative flex-1 [font-family:'Work_Sans',Helvetica] font-normal text-[#121212] text-xs tracking-[0] leading-4 underline hover:text-blue-600 text-left"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleButtonClick("open-url", { url: row.url, row: index });
+              }}
+            >
               {row.url}
-            </div>
+            </button>
           </div>
         ))}
 
@@ -490,7 +512,10 @@ export const DataTableSection = (): JSX.Element => {
       {/* Assigned Column */}
       <div className="flex flex-col w-[124px] items-start gap-px relative self-stretch">
         <div className="justify-center gap-2 px-4 py-0 bg-[#d2e0d4] flex h-8 items-center relative self-stretch w-full">
-          <div className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] rounded">
+          <button 
+            className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] rounded hover:bg-green-200"
+            onClick={() => handleButtonClick("abc-action")}
+          >
             <img
               className="relative w-4 h-4"
               alt="Arrow split"
@@ -499,14 +524,20 @@ export const DataTableSection = (): JSX.Element => {
             <div className="relative w-fit mt-[-1.00px] font-paragraph-14-s-medium-14-20 font-[number:var(--paragraph-14-s-medium-14-20-font-weight)] text-[#505450] text-[length:var(--paragraph-14-s-medium-14-20-font-size)] tracking-[var(--paragraph-14-s-medium-14-20-letter-spacing)] leading-[var(--paragraph-14-s-medium-14-20-line-height)] whitespace-nowrap [font-style:var(--paragraph-14-s-medium-14-20-font-style)]">
               ABC
             </div>
-            <div className="flex w-5 h-5 items-center justify-center gap-2 relative rounded">
+            <button 
+              className="flex w-5 h-5 items-center justify-center gap-2 relative rounded hover:bg-green-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleButtonClick("abc-more");
+              }}
+            >
               <img
                 className="relative w-4 h-4"
                 alt="More"
                 src="https://c.animaapp.com/mclmkdkf288FZk/img/more.svg"
               />
-            </div>
-          </div>
+            </button>
+          </button>
         </div>
         <div className="gap-1 pl-2 pr-1 py-0 bg-[#e8f0e9] flex h-8 items-center relative self-stretch w-full">
           <div className="gap-1 flex-1 grow flex items-center relative">
@@ -524,7 +555,12 @@ export const DataTableSection = (): JSX.Element => {
         {tableData.map((row, index) => (
           <div
             key={`assigned-${index}`}
-            className="flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full bg-white"
+            className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
+              selectedCell?.row === index && selectedCell?.column === "assigned"
+                ? "bg-blue-100 ring-2 ring-blue-500"
+                : "bg-white"
+            }`}
+            onClick={() => handleCellClick(index, "assigned")}
           >
             <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
               {row.assigned}
@@ -544,7 +580,10 @@ export const DataTableSection = (): JSX.Element => {
       {/* Priority and Due Date Columns */}
       <div className="flex flex-col w-[251px] items-start justify-center gap-px relative self-stretch">
         <div className="justify-center gap-2 px-4 py-0 bg-[#dccffc] flex h-8 items-center relative self-stretch w-full">
-          <div className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] rounded">
+          <button 
+            className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] rounded hover:bg-purple-200"
+            onClick={() => handleButtonClick("answer-question-action")}
+          >
             <img
               className="relative w-4 h-4"
               alt="Arrow split"
@@ -553,14 +592,20 @@ export const DataTableSection = (): JSX.Element => {
             <div className="text-[#463e59] relative w-fit mt-[-1.00px] font-paragraph-14-s-medium-14-20 font-[number:var(--paragraph-14-s-medium-14-20-font-weight)] text-[length:var(--paragraph-14-s-medium-14-20-font-size)] tracking-[var(--paragraph-14-s-medium-14-20-letter-spacing)] leading-[var(--paragraph-14-s-medium-14-20-line-height)] whitespace-nowrap [font-style:var(--paragraph-14-s-medium-14-20-font-style)]">
               Answer a question
             </div>
-            <div className="flex w-5 h-5 items-center justify-center gap-2 relative rounded">
+            <button 
+              className="flex w-5 h-5 items-center justify-center gap-2 relative rounded hover:bg-purple-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleButtonClick("answer-question-more");
+              }}
+            >
               <img
                 className="relative w-4 h-4"
                 alt="More"
                 src="https://c.animaapp.com/mclmkdkf288FZk/img/more.svg"
               />
-            </div>
-          </div>
+            </button>
+          </button>
         </div>
         <div className="flex items-center gap-px relative flex-1 self-stretch w-full grow">
           {/* Priority Column */}
@@ -576,13 +621,22 @@ export const DataTableSection = (): JSX.Element => {
             {tableData.map((row, index) => (
               <div
                 key={`priority-${index}`}
-                className="flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full bg-white"
+                className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
+                  selectedCell?.row === index && selectedCell?.column === "priority"
+                    ? "bg-blue-100 ring-2 ring-blue-500"
+                    : "bg-white"
+                }`}
+                onClick={() => handleCellClick(index, "priority")}
               >
-                <div
-                  className={`relative w-fit font-paragraph-12-XS-semi-bold-12-16 font-[number:var(--paragraph-12-XS-semi-bold-12-16-font-weight)] ${getPriorityStyle(row.priority.type)} text-[length:var(--paragraph-12-XS-semi-bold-12-16-font-size)] text-center tracking-[var(--paragraph-12-XS-semi-bold-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-semi-bold-12-16-line-height)] whitespace-nowrap [font-style:var(--paragraph-12-XS-semi-bold-12-16-font-style)]`}
+                <button
+                  className={`relative w-fit font-paragraph-12-XS-semi-bold-12-16 font-[number:var(--paragraph-12-XS-semi-bold-12-16-font-weight)] ${getPriorityStyle(row.priority.type)} text-[length:var(--paragraph-12-XS-semi-bold-12-16-font-size)] text-center tracking-[var(--paragraph-12-XS-semi-bold-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-semi-bold-12-16-line-height)] whitespace-nowrap [font-style:var(--paragraph-12-XS-semi-bold-12-16-font-style)] hover:opacity-80`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleButtonClick("change-priority", { row: index, currentPriority: row.priority });
+                  }}
                 >
                   {row.priority.label}
-                </div>
+                </button>
               </div>
             ))}
 
@@ -608,7 +662,12 @@ export const DataTableSection = (): JSX.Element => {
             {tableData.map((row, index) => (
               <div
                 key={`dueDate-${index}`}
-                className="flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full bg-white"
+                className={`flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
+                  selectedCell?.row === index && selectedCell?.column === "dueDate"
+                    ? "bg-blue-100 ring-2 ring-blue-500"
+                    : "bg-white"
+                }`}
+                onClick={() => handleCellClick(index, "dueDate")}
               >
                 <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] text-right tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
                   {row.dueDate}
@@ -630,7 +689,10 @@ export const DataTableSection = (): JSX.Element => {
       {/* Estimated Value Column */}
       <div className="flex flex-col w-[124px] items-start justify-center gap-px relative self-stretch">
         <div className="justify-center gap-2 px-4 py-0 bg-[#fac2af] flex h-8 items-center relative self-stretch w-full">
-          <div className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] ml-[-5.00px] mr-[-5.00px] rounded">
+          <button 
+            className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] ml-[-5.00px] mr-[-5.00px] rounded hover:bg-orange-200"
+            onClick={() => handleButtonClick("extract-action")}
+          >
             <img
               className="relative w-4 h-4"
               alt="Arrow split"
@@ -639,14 +701,20 @@ export const DataTableSection = (): JSX.Element => {
             <div className="text-[#695149] relative w-fit mt-[-1.00px] font-paragraph-14-s-medium-14-20 font-[number:var(--paragraph-14-s-medium-14-20-font-weight)] text-[length:var(--paragraph-14-s-medium-14-20-font-size)] tracking-[var(--paragraph-14-s-medium-14-20-letter-spacing)] leading-[var(--paragraph-14-s-medium-14-20-line-height)] whitespace-nowrap [font-style:var(--paragraph-14-s-medium-14-20-font-style)]">
               Extract
             </div>
-            <div className="flex w-5 h-5 items-center justify-center gap-2 relative rounded">
+            <button 
+              className="flex w-5 h-5 items-center justify-center gap-2 relative rounded hover:bg-orange-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleButtonClick("extract-more");
+              }}
+            >
               <img
                 className="relative w-4 h-4"
                 alt="More"
                 src="https://c.animaapp.com/mclmkdkf288FZk/img/more.svg"
               />
-            </div>
-          </div>
+            </button>
+          </button>
         </div>
         <div className="w-[124px] flex-1 grow flex flex-col items-start gap-px relative">
           <div className="gap-1 pl-2 pr-1 py-0 bg-[#ffe9e0] flex h-8 items-center relative self-stretch w-full">
@@ -660,7 +728,12 @@ export const DataTableSection = (): JSX.Element => {
           {tableData.map((row, index) => (
             <div
               key={`estValue-${index}`}
-              className="flex h-8 items-center justify-center gap-1 px-2 py-0 relative self-stretch w-full bg-white"
+              className={`flex h-8 items-center justify-center gap-1 px-2 py-0 relative self-stretch w-full cursor-pointer hover:bg-gray-50 ${
+                selectedCell?.row === index && selectedCell?.column === "estValue"
+                  ? "bg-blue-100 ring-2 ring-blue-500"
+                  : "bg-white"
+              }`}
+              onClick={() => handleCellClick(index, "estValue")}
             >
               <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] text-right tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
                 {row.estValue}
@@ -683,13 +756,16 @@ export const DataTableSection = (): JSX.Element => {
 
       {/* Add Column Button */}
       <div className="w-[126px] self-stretch mt-[-1.00px] mb-[-1.00px] overflow-hidden border border-dashed border-[#cbcbcb] flex flex-col items-start gap-px relative">
-        <div className="flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full bg-[#eeeeee]">
+        <button 
+          className="flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full bg-[#eeeeee] hover:bg-gray-200 cursor-pointer"
+          onClick={() => handleButtonClick("add-column")}
+        >
           <img
             className="relative w-5 h-5"
             alt="Add"
             src="https://c.animaapp.com/mclmkdkf288FZk/img/add.svg"
           />
-        </div>
+        </button>
 
         {/* Empty rows */}
         {Array.from({ length: 26 }, (_, i) => (
