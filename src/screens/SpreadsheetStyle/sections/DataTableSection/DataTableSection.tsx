@@ -297,14 +297,15 @@ export const DataTableSection = (): JSX.Element => {
   return (
     <div className="flex h-[872px] items-start gap-px relative self-stretch w-full z-[1] bg-[#f6f6f6] overflow-hidden">
       {/* Keyboard navigation instructions */}
-      {selectedCell && (
+      {/* {selectedCell && (
         <div className="absolute top-2 left-2 z-50 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
           ↑↓←→ Navigate | Enter: Edit | Esc: Deselect | Double-click: Edit
         </div>
-      )}
+      )} */}
       
       {/* Column visibility panel */}
-      <div className="absolute top-12 left-2 z-40 bg-white border rounded shadow-lg p-2 text-xs">
+      
+      {/* <div className="absolute top-12 left-2 z-40 bg-white border rounded shadow-lg p-2 text-xs">
         <div className="font-semibold mb-2">Column Visibility</div>
         {columnConfigs.map(col => (
           <div key={col.id} className="flex items-center gap-2 mb-1">
@@ -324,7 +325,7 @@ export const DataTableSection = (): JSX.Element => {
           Hover column headers to see hide buttons<br/>
           Drag column edges to resize
         </div>
-      </div>
+      </div> */}
       
       {/* Row numbers column */}
       <div className="w-8 self-stretch flex flex-col items-start gap-px relative">
@@ -550,7 +551,7 @@ export const DataTableSection = (): JSX.Element => {
         )}
 
         {/* Status Column */}
-        <div className="w-[124px] self-stretch z-[1] flex flex-col items-start gap-px relative">
+        <div className="w-[128px] self-stretch z-[1] flex flex-col items-start gap-px relative">
           <div className="relative self-stretch w-full h-8 bg-white" />
           <div className="flex h-8 items-center gap-1 pl-2 pr-1 py-0 relative self-stretch w-full bg-[#eeeeee]">
             <div className="gap-1 flex-1 grow flex items-center relative">
@@ -609,7 +610,7 @@ export const DataTableSection = (): JSX.Element => {
         </div>
 
         {/* Submitter Column */}
-        <div className="w-[124px] self-stretch z-0 flex flex-col items-start gap-px relative">
+        <div className="w-[128px] self-stretch z-0 flex flex-col items-start gap-px relative">
           <div className="relative self-stretch w-full h-8 bg-white" />
           <div className="flex h-8 items-center gap-1 pl-2 pr-1 py-0 relative self-stretch w-full bg-[#eeeeee]">
             <div className="gap-1 flex-1 grow flex items-center relative">
@@ -661,7 +662,7 @@ export const DataTableSection = (): JSX.Element => {
       </div>
 
       {/* URL Column */}
-      <div className="flex flex-col w-[124px] items-start gap-px relative self-stretch">
+      <div className="flex flex-col w-[128px] items-start gap-px relative self-stretch">
         <div className="relative self-stretch w-full h-8 bg-white" />
         <div className="flex h-8 items-center gap-1 pl-2 pr-1 py-0 relative self-stretch w-full bg-[#eeeeee]">
           <div className="gap-1 flex-1 grow flex items-center relative">
@@ -718,8 +719,8 @@ export const DataTableSection = (): JSX.Element => {
       </div>
 
       {/* Assigned Column */}
-      <div className="flex flex-col w-[124px] items-start gap-px relative self-stretch">
-        <div className="justify-center gap-2 px-4 py-0 bg-[#d2e0d4] flex h-8 items-center relative self-stretch w-full">
+      <div className="flex flex-col w-[128px] items-start gap-px relative self-stretch">
+        <div className="justify-center gap-2 px-4 py-2 bg-[#d2e0d4] flex h-8 items-center relative self-stretch w-full">
           <button 
             className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] rounded hover:bg-green-200"
             onClick={() => handleButtonClick("abc-action")}
@@ -786,8 +787,8 @@ export const DataTableSection = (): JSX.Element => {
       </div>
 
       {/* Priority and Due Date Columns */}
-      <div className="flex flex-col w-[251px] items-start justify-center gap-px relative self-stretch">
-        <div className="justify-center gap-2 px-4 py-0 bg-[#dccffc] flex h-8 items-center relative self-stretch w-full">
+      <div className="flex flex-col w-[256px] items-start gap-px relative self-stretch">
+        <div className="justify-center gap-2 px-4 py-2 bg-[#dccffc] flex h-8 items-center relative self-stretch w-full">
           <button 
             className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] rounded hover:bg-purple-200"
             onClick={() => handleButtonClick("answer-question-action")}
@@ -895,10 +896,10 @@ export const DataTableSection = (): JSX.Element => {
       </div>
 
       {/* Estimated Value Column */}
-      <div className="flex flex-col w-[124px] items-start justify-center gap-px relative self-stretch">
-        <div className="justify-center gap-2 px-4 py-0 bg-[#fac2af] flex h-8 items-center relative self-stretch w-full">
+      <div className="flex flex-col w-[128px] items-start gap-px relative self-stretch">
+        <div className="justify-center gap-2 px-4 py-2 bg-[#fac2af] flex h-8 items-center relative self-stretch w-full">
           <button 
-            className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] ml-[-5.00px] mr-[-5.00px] rounded hover:bg-orange-200"
+            className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] rounded hover:bg-orange-200"
             onClick={() => handleButtonClick("extract-action")}
           >
             <img
@@ -924,7 +925,7 @@ export const DataTableSection = (): JSX.Element => {
             </button>
           </button>
         </div>
-        <div className="w-[124px] flex-1 grow flex flex-col items-start gap-px relative">
+        <div className="w-[128px] flex-1 grow flex flex-col items-start gap-px relative">
           <div className="gap-1 pl-2 pr-1 py-0 bg-[#ffe9e0] flex h-8 items-center relative self-stretch w-full">
             <div className="gap-1 flex-1 grow flex items-center relative">
               <div className="text-[#8c6b61] relative flex-1 mt-[-1.00px] font-paragraph-12-XS-semi-bold-12-16 font-[number:var(--paragraph-12-XS-semi-bold-12-16-font-weight)] text-[length:var(--paragraph-12-XS-semi-bold-12-16-font-size)] tracking-[var(--paragraph-12-XS-semi-bold-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-semi-bold-12-16-line-height)] [font-style:var(--paragraph-12-XS-semi-bold-12-16-font-style)]">
@@ -965,11 +966,11 @@ export const DataTableSection = (): JSX.Element => {
       {/* Add Column Button */}
       <div className="w-[126px] self-stretch mt-[-1.00px] mb-[-1.00px] overflow-hidden border border-dashed border-[#cbcbcb] flex flex-col items-start gap-px relative">
         <button 
-          className="flex h-8 items-center justify-center gap-2 px-2 py-0 relative self-stretch w-full bg-[#eeeeee] hover:bg-gray-200 cursor-pointer"
+          className="flex h-8 items-center justify-center gap-2 px-2 py-4 relative self-stretch w-full bg-[#eeeeee] hover:bg-gray-200 cursor-pointer"
           onClick={() => handleButtonClick("add-column")}
         >
           <img
-            className="relative w-5 h-5"
+            className="relative w-6 h-6"
             alt="Add"
             src="https://c.animaapp.com/mclmkdkf288FZk/img/add.svg"
           />
