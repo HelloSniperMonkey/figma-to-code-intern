@@ -1,0 +1,149 @@
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
+}
+
+:root {
+  --black: rgba(4, 7, 30, 1);
+  --label-10-XXS-regular-font-family: "Work Sans", Helvetica;
+  --label-10-XXS-regular-font-size: 10px;
+  --label-10-XXS-regular-font-style: normal;
+  --label-10-XXS-regular-font-weight: 400;
+  --label-10-XXS-regular-letter-spacing: 0px;
+  --label-10-XXS-regular-line-height: 12px;
+  --paragraph-10-XXS-medium-10-16-font-family: "Work Sans", Helvetica;
+  --paragraph-10-XXS-medium-10-16-font-size: 10px;
+  --paragraph-10-XXS-medium-10-16-font-style: normal;
+  --paragraph-10-XXS-medium-10-16-font-weight: 500;
+  --paragraph-10-XXS-medium-10-16-letter-spacing: 0px;
+  --paragraph-10-XXS-medium-10-16-line-height: 16px;
+  --paragraph-12-XS-medium-12-16-font-family: "Work Sans", Helvetica;
+  --paragraph-12-XS-medium-12-16-font-size: 12px;
+  --paragraph-12-XS-medium-12-16-font-style: normal;
+  --paragraph-12-XS-medium-12-16-font-weight: 500;
+  --paragraph-12-XS-medium-12-16-letter-spacing: 0px;
+  --paragraph-12-XS-medium-12-16-line-height: 16px;
+  --paragraph-12-XS-regular-12-16-font-family: "Work Sans", Helvetica;
+  --paragraph-12-XS-regular-12-16-font-size: 12px;
+  --paragraph-12-XS-regular-12-16-font-style: normal;
+  --paragraph-12-XS-regular-12-16-font-weight: 400;
+  --paragraph-12-XS-regular-12-16-letter-spacing: 0px;
+  --paragraph-12-XS-regular-12-16-line-height: 16px;
+  --paragraph-12-XS-semi-bold-12-16-font-family: "Work Sans", Helvetica;
+  --paragraph-12-XS-semi-bold-12-16-font-size: 12px;
+  --paragraph-12-XS-semi-bold-12-16-font-style: normal;
+  --paragraph-12-XS-semi-bold-12-16-font-weight: 600;
+  --paragraph-12-XS-semi-bold-12-16-letter-spacing: 0px;
+  --paragraph-12-XS-semi-bold-12-16-line-height: 16px;
+  --paragraph-14-s-medium-14-20-font-family: "Work Sans", Helvetica;
+  --paragraph-14-s-medium-14-20-font-size: 14px;
+  --paragraph-14-s-medium-14-20-font-style: normal;
+  --paragraph-14-s-medium-14-20-font-weight: 500;
+  --paragraph-14-s-medium-14-20-letter-spacing: 0px;
+  --paragraph-14-s-medium-14-20-line-height: 20px;
+  --paragraph-14-s-regular-14-20-font-family: "Work Sans", Helvetica;
+  --paragraph-14-s-regular-14-20-font-size: 14px;
+  --paragraph-14-s-regular-14-20-font-style: normal;
+  --paragraph-14-s-regular-14-20-font-weight: 400;
+  --paragraph-14-s-regular-14-20-letter-spacing: 0px;
+  --paragraph-14-s-regular-14-20-line-height: 20px;
+  --paragraph-16-m-medium-16-24-font-family: "Work Sans", Helvetica;
+  --paragraph-16-m-medium-16-24-font-size: 16px;
+  --paragraph-16-m-medium-16-24-font-style: normal;
+  --paragraph-16-m-medium-16-24-font-weight: 500;
+  --paragraph-16-m-medium-16-24-letter-spacing: 0px;
+  --paragraph-16-m-medium-16-24-line-height: 24px;
+  --paragraph-16-m-semi-bold-16-24-font-family: "Work Sans", Helvetica;
+  --paragraph-16-m-semi-bold-16-24-font-size: 16px;
+  --paragraph-16-m-semi-bold-16-24-font-style: normal;
+  --paragraph-16-m-semi-bold-16-24-font-weight: 600;
+  --paragraph-16-m-semi-bold-16-24-letter-spacing: 0px;
+  --paragraph-16-m-semi-bold-16-24-line-height: 24px;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --card: transparent;
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 215 20.2% 65.1%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+
+    --card: transparent;
+    --card-foreground: 213 31% 91%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 222.2 47.4% 11.2%;
+    --secondary-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 216 34% 17%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

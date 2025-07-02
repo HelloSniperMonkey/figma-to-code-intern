@@ -1,0 +1,3 @@
+6. Stretch (optional, only if time permits)
+Keyboard navigation within the grid (arrow keys).
+Column resize / hide toggles.
