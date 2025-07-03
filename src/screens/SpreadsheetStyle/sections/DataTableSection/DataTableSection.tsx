@@ -31,6 +31,7 @@ interface CellData {
     underline?: boolean;
     align?: "left" | "center" | "right";
     fontSize?: number;
+    fontFamily?: string;
     backgroundColor?: string;
     textColor?: string;
   };
@@ -405,7 +406,7 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
             </Button>
             <Separator orientation="vertical" className="h-6" />
 
-            <Select defaultValue="Arial">
+            <Select defaultValue="Arial" onValueChange={(font: string) => applyFormatting("fontFamily", font)}>
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
@@ -416,7 +417,7 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
               </SelectContent>
             </Select>
 
-            <Select defaultValue="12">
+            <Select defaultValue="12" onValueChange={(size: string) => applyFormatting("fontSize", parseInt(size))}>
               <SelectTrigger className="w-16">
                 <SelectValue />
               </SelectTrigger>
@@ -567,6 +568,8 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
                       fontStyle: cellData?.style?.italic ? "italic" : "normal",
                       textDecoration: cellData?.style?.underline ? "underline" : "none",
                       textAlign: cellData?.style?.align || "left",
+                      fontSize: cellData?.style?.fontSize ? `${cellData.style.fontSize}px` : "12px",
+                      fontFamily: cellData?.style?.fontFamily || "Arial",
                       backgroundColor: cellData?.style?.backgroundColor,
                       color: cellData?.style?.textColor,
                     }}
