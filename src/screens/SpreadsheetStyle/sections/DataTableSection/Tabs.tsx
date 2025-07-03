@@ -43,7 +43,7 @@ export const Tabs: React.FC<TabsProps> = ({ sheets, activeSheet, onSheetChange, 
   };
 
   return (
-    <div className="flex items-center border-t bg-white px-4">
+    <div className="flex items-center border-t bg-white px-12">
       <UiTabs value={activeSheet} onValueChange={onSheetChange} className="items-start inline-flex relative flex-[0_0_auto]">
         <TabsList className="bg-transparent p-0 h-auto">
           {sheets.map((sheet) => (

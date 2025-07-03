@@ -50,10 +50,14 @@ interface Sheets {
   [key: string]: Sheet;
 }
 
+interface DataTableSectionProps {
+  isToolbarVisible: boolean;
+}
+
 const ROWS = 100;
 const COLS = 26;
 
-export const DataTableSection = (): JSX.Element => {
+export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): JSX.Element => {
   const [sheets, setSheets] = useState<Sheets>({
     Sheet1: { data: {}, history: [{}], historyIndex: 0 },
   });
@@ -366,106 +370,110 @@ export const DataTableSection = (): JSX.Element => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* Toolbar */}
-      <div className="border-b p-2 flex items-center gap-2 flex-wrap">
-        <Button variant="ghost" size="sm" onClick={handleUndo}>
-          <Undo className="w-4 h-4" />
-        </Button>
-        <Button variant="ghost" size="sm" onClick={handleRedo}>
-          <Redo className="w-4 h-4" />
-        </Button>
-        <Separator orientation="vertical" className="h-6" />
+    <div className="flex flex-col bg-background" style={{ height: 'calc(100vh - 120px)' }}>
+      {isToolbarVisible && (
+        <>
+          {/* Toolbar */}
+          <div className="border-b p-2 flex items-center gap-2 flex-wrap">
+            <Button variant="ghost" size="sm" onClick={handleUndo}>
+              <Undo className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleRedo}>
+              <Redo className="w-4 h-4" />
+            </Button>
+            <Separator orientation="vertical" className="h-6" />
 
-        <Button variant="ghost" size="sm" onClick={handleCopy}>
-          <Copy className="w-4 h-4" />
-        </Button>
-        <Button variant="ghost" size="sm" onClick={handlePaste}>
-          <Paste className="w-4 h-4" />
-        </Button>
-        <Separator orientation="vertical" className="h-6" />
+            <Button variant="ghost" size="sm" onClick={handleCopy}>
+              <Copy className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handlePaste}>
+              <Paste className="w-4 h-4" />
+            </Button>
+            <Separator orientation="vertical" className="h-6" />
 
-        <Select defaultValue="Arial">
-          <SelectTrigger className="w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Arial">Arial</SelectItem>
-            <SelectItem value="Times">Times</SelectItem>
-            <SelectItem value="Courier">Courier</SelectItem>
-          </SelectContent>
-        </Select>
+            <Select defaultValue="Arial">
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Arial">Arial</SelectItem>
+                <SelectItem value="Times">Times</SelectItem>
+                <SelectItem value="Courier">Courier</SelectItem>
+              </SelectContent>
+            </Select>
 
-        <Select defaultValue="12">
-          <SelectTrigger className="w-16">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="10">10</SelectItem>
-            <SelectItem value="12">12</SelectItem>
-            <SelectItem value="14">14</SelectItem>
-            <SelectItem value="16">16</SelectItem>
-            <SelectItem value="18">18</SelectItem>
-          </SelectContent>
-        </Select>
+            <Select defaultValue="12">
+              <SelectTrigger className="w-16">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="12">12</SelectItem>
+                <SelectItem value="14">14</SelectItem>
+                <SelectItem value="16">16</SelectItem>
+                <SelectItem value="18">18</SelectItem>
+              </SelectContent>
+            </Select>
 
-        <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="h-6" />
 
-        <Toggle
-          pressed={data[selectedCell]?.style?.bold}
-          onPressedChange={(pressed: boolean) => applyFormatting("bold", pressed)}
-        >
-          <Bold className="w-4 h-4" />
-        </Toggle>
-        <Toggle
-          pressed={data[selectedCell]?.style?.italic}
-          onPressedChange={(pressed: boolean) => applyFormatting("italic", pressed)}
-        >
-          <Italic className="w-4 h-4" />
-        </Toggle>
-        <Toggle
-          pressed={data[selectedCell]?.style?.underline}
-          onPressedChange={(pressed: boolean) => applyFormatting("underline", pressed)}
-        >
-          <Underline className="w-4 h-4" />
-        </Toggle>
+            <Toggle
+              pressed={data[selectedCell]?.style?.bold}
+              onPressedChange={(pressed: boolean) => applyFormatting("bold", pressed)}
+            >
+              <Bold className="w-4 h-4" />
+            </Toggle>
+            <Toggle
+              pressed={data[selectedCell]?.style?.italic}
+              onPressedChange={(pressed: boolean) => applyFormatting("italic", pressed)}
+            >
+              <Italic className="w-4 h-4" />
+            </Toggle>
+            <Toggle
+              pressed={data[selectedCell]?.style?.underline}
+              onPressedChange={(pressed: boolean) => applyFormatting("underline", pressed)}
+            >
+              <Underline className="w-4 h-4" />
+            </Toggle>
 
-        <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="h-6" />
 
-        <Toggle
-          pressed={data[selectedCell]?.style?.align === "left"}
-          onPressedChange={() => applyFormatting("align", "left")}
-        >
-          <AlignLeft className="w-4 h-4" />
-        </Toggle>
-        <Toggle
-          pressed={data[selectedCell]?.style?.align === "center"}
-          onPressedChange={() => applyFormatting("align", "center")}
-        >
-          <AlignCenter className="w-4 h-4" />
-        </Toggle>
-        <Toggle
-          pressed={data[selectedCell]?.style?.align === "right"}
-          onPressedChange={() => applyFormatting("align", "right")}
-        >
-          <AlignRight className="w-4 h-4" />
-        </Toggle>
-      </div>
+            <Toggle
+              pressed={data[selectedCell]?.style?.align === "left"}
+              onPressedChange={() => applyFormatting("align", "left")}
+            >
+              <AlignLeft className="w-4 h-4" />
+            </Toggle>
+            <Toggle
+              pressed={data[selectedCell]?.style?.align === "center"}
+              onPressedChange={() => applyFormatting("align", "center")}
+            >
+              <AlignCenter className="w-4 h-4" />
+            </Toggle>
+            <Toggle
+              pressed={data[selectedCell]?.style?.align === "right"}
+              onPressedChange={() => applyFormatting("align", "right")}
+            >
+              <AlignRight className="w-4 h-4" />
+            </Toggle>
+          </div>
 
-      {/* Formula Bar */}
-      <div className="border-b p-2 flex items-center gap-2">
-        <div className="w-20 text-sm font-medium">{selectedCell}</div>
-        <Input
-          value={formulaBarValue}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormulaBarChange(e.target.value)}
-          placeholder="Enter formula or value"
-          className="flex-1"
-        />
-      </div>
+          {/* Formula Bar */}
+          <div className="border-b p-2 flex items-center gap-2">
+            <div className="w-20 text-sm font-medium">{selectedCell}</div>
+            <Input
+              value={formulaBarValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormulaBarChange(e.target.value)}
+              placeholder="Enter formula or value"
+              className="flex-1"
+            />
+          </div>
+        </>
+      )}
 
       {/* Spreadsheet Grid */}
-      <div className="flex-1 overflow-auto" ref={gridRef}>
-        <div className="inline-block min-w-full">
+      <div className="flex-1 overflow-auto w-full" ref={gridRef}>
+        <div className="inline-block" style={{ minWidth: `${96 * COLS + 48}px` }}>
           {/* Header Row */}
           <div className="flex sticky top-0 bg-muted z-10">
             <div className="w-12 h-8 border border-border bg-muted flex items-center justify-center text-xs font-medium"></div>

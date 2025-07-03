@@ -123,7 +123,7 @@ export const NavigationBarSection = (): JSX.Element => {
         >
           <div className="relative">
             <img
-              className="relative w-6 h-6"
+              className="relative w-8 h-6"
               alt="Alert"
               src="https://c.animaapp.com/mclmkdkf288FZk/img/alert.svg"
             />
@@ -140,7 +140,7 @@ export const NavigationBarSection = (): JSX.Element => {
           className="inline-flex items-center gap-2 pl-2 pr-3 py-1.5 relative flex-[0_0_auto] bg-white rounded-lg h-auto"
           onClick={() => handleButtonClick("user-menu")}
         >
-          <Avatar className="w-7 h-7">
+          <Avatar className="w-8 h-8">
             <AvatarImage
               src="https://c.animaapp.com/mclmkdkf288FZk/img/ellipse-1.png"
               alt="John Doe"
@@ -151,7 +151,7 @@ export const NavigationBarSection = (): JSX.Element => {
             <div className="relative w-fit mt-[-1.00px] font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] whitespace-nowrap [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
               John Doe
             </div>
-            <div className="relative self-stretch -mt-0.5 font-label-10-XXS-regular font-[number:var(--label-10-XXS-regular-font-weight)] text-[#757575] text-[length:var(--label-10-XXS-regular-font-size)] tracking-[var(--label-10-XXS-regular-letter-spacing)] leading-[var(--label-10-XXS-regular-line-height)] [font-style:var(--label-10-XXS-regular-font-style)]">
+            <div className="relative self-stretch -mt-0.5 font-label-10-XXS-regular font-[number:var(--label-10-XXS-regular-font-weight)] text-[#757575] text-[length:var(--label-10-XXS-regular-font-size)] tracking-[var(--label-10-XXS-regular-letter-spacing)] leading-[var(--label-10-XXS-regular-line-height)] [font-style:var(--label-10-XXS-regular-font-style)] truncate">
               john.doe@companyname.com
             </div>
           </div>
