@@ -472,8 +472,16 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
       )}
 
       {/* Spreadsheet Grid */}
-      <div className="flex-1 overflow-auto w-full" ref={gridRef}>
-        <div className="inline-block" style={{ minWidth: `${96 * COLS + 48}px` }}>
+      <div 
+        className="flex-1 overflow-auto w-full relative" 
+        ref={gridRef}
+        style={{
+          scrollBehavior: 'smooth',
+          overscrollBehavior: 'contain',
+          maxWidth: '100vw'
+        }}
+      >
+        <div className="inline-block">
           {/* Header Row */}
           <div className="flex sticky top-0 bg-muted z-10">
             <div className="w-12 h-8 border border-border bg-muted flex items-center justify-center text-xs font-medium"></div>

@@ -4,7 +4,7 @@ import { DataTableSection } from "./sections/DataTableSection/DataTableSection";
 import { NavigationBarSection } from "./sections/NavigationBarSection";
 
 export const SpreadsheetStyle = (): JSX.Element => {
-  const [isToolbarVisible, setIsToolbarVisible] = useState(true);
+  const [isToolbarVisible, setIsToolbarVisible] = useState(false);
 
   useEffect(() => {
     const setVh = () => {

@@ -87,7 +87,6 @@ export const DataRowSection = ({ isToolbarVisible, onToolbarToggle }: DataRowSec
       <div className="relative w-px h-6 z-[2] bg-[#eeeeee]" />
 
       {/* Toolbar actions */}
-      {isToolbarVisible && (
         <div className="flex items-center gap-1 relative flex-1 grow z-[1]">
           {toolbarActions.map((action, index) => (
             <Button
@@ -107,7 +106,6 @@ export const DataRowSection = ({ isToolbarVisible, onToolbarToggle }: DataRowSec
             </Button>
           ))}
         </div>
-      )}
 
       {/* Import/Export/Share actions */}
       <div className="inline-flex items-center justify-end gap-2 relative flex-[0_0_auto] z-0">
