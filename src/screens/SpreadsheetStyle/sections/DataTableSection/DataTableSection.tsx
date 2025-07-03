@@ -330,6 +330,41 @@ export const DataTableSection = (): JSX.Element => {
     setActiveSheet(newSheetName);
   };
 
+  const handleSheetRename = (oldName: string, newName: string) => {
+    const trimmedNewName = newName.trim();
+    if (oldName === trimmedNewName || !trimmedNewName || sheets[trimmedNewName]) {
+      return; // Name is the same, empty, or already exists
+    }
+
+    const newSheets = { ...sheets };
+    const sheetData = newSheets[oldName];
+    delete newSheets[oldName];
+    newSheets[trimmedNewName] = sheetData;
+
+    setSheets(newSheets);
+
+    if (activeSheet === oldName) {
+      setActiveSheet(trimmedNewName);
+    }
+  };
+
+  const handleSheetDelete = (sheetName: string) => {
+    if (Object.keys(sheets).length <= 1) {
+      return; // Don't delete the last sheet
+    }
+
+    const newSheets = { ...sheets };
+    delete newSheets[sheetName];
+
+    let newActiveSheet = activeSheet;
+    if (activeSheet === sheetName) {
+      newActiveSheet = Object.keys(newSheets)[0];
+    }
+
+    setSheets(newSheets);
+    setActiveSheet(newActiveSheet);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Toolbar */}
@@ -511,6 +546,8 @@ export const DataTableSection = (): JSX.Element => {
         activeSheet={activeSheet}
         onSheetChange={setActiveSheet}
         onAddSheet={handleAddSheet}
+        onSheetRename={handleSheetRename}
+        onSheetDelete={handleSheetDelete}
       />
     </div>
   );

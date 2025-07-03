@@ -1,6 +1,5 @@
 import { DataRowSection } from "./sections/DataRowSection";
 import { DataTableSection } from "./sections/DataTableSection/DataTableSection";
-import { HeaderSection } from "./sections/HeaderSection";
 import { NavigationBarSection } from "./sections/NavigationBarSection";
 
 export const SpreadsheetStyle = (): JSX.Element => {
@@ -13,7 +12,6 @@ export const SpreadsheetStyle = (): JSX.Element => {
         <NavigationBarSection />
         <DataRowSection />
         <DataTableSection />
-        <HeaderSection />
       </div>
     </main>
   );
