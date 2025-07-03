@@ -52,12 +52,12 @@ interface Sheets {
 
 interface DataTableSectionProps {
   isToolbarVisible: boolean;
+  cols: number;
+  columnNames: { [key: number]: string };
+  onColumnRename: (colIndex: number, newName: string) => void;
 }
 
-const ROWS = 100;
-const COLS = 26;
-
-export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): JSX.Element => {
+export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumnRename }: DataTableSectionProps): JSX.Element => {
   const [sheets, setSheets] = useState<Sheets>({
     Sheet1: { data: {}, history: [{}], historyIndex: 0 },
   });
@@ -69,6 +69,9 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
 
   const [columnWidths, setColumnWidths] = useState<{ [key: number]: number }>({});
   const [rowHeights, setRowHeights] = useState<{ [key: number]: number }>({});
+  const [rows, setRows] = useState(50);
+  const [numRowsToAdd, setNumRowsToAdd] = useState(1);
+  const [editingColumn, setEditingColumn] = useState<number | null>(null);
 
   const gridRef = useRef<HTMLDivElement>(null);
   const cellRefs = useRef<{ [key: string]: HTMLInputElement }>({});
@@ -193,13 +196,13 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
         newRow = Math.max(0, newRow - 1);
         break;
       case "ArrowDown":
-        newRow = Math.min(ROWS - 1, newRow + 1);
+        newRow = Math.min(rows - 1, newRow + 1);
         break;
       case "ArrowLeft":
         newCol = Math.max(0, newCol - 1);
         break;
       case "ArrowRight":
-        newCol = Math.min(COLS - 1, newCol + 1);
+        newCol = Math.min(cols - 1, newCol + 1);
         break;
       case "Enter":
         setIsEditing(true);
@@ -325,6 +328,11 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
     document.addEventListener("mouseup", handleMouseUp);
   };
 
+  const handleColumnRename = (colIndex: number, newName: string) => {
+    onColumnRename(colIndex, newName);
+    setEditingColumn(null);
+  };
+
   const handleAddSheet = () => {
     const newSheetName = `Sheet${Object.keys(sheets).length + 1}`;
     setSheets((prev) => ({
@@ -349,6 +357,12 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
 
     if (activeSheet === oldName) {
       setActiveSheet(trimmedNewName);
+    }
+  };
+
+  const handleAddRows = () => {
+    if (numRowsToAdd > 0) {
+      setRows((prevRows) => prevRows + numRowsToAdd);
     }
   };
 
@@ -472,8 +486,8 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
       )}
 
       {/* Spreadsheet Grid */}
-      <div 
-        className="flex-1 overflow-auto w-full relative" 
+      <div
+        className="flex-1 overflow-auto w-full relative"
         ref={gridRef}
         style={{
           scrollBehavior: 'smooth',
@@ -485,40 +499,55 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
           {/* Header Row */}
           <div className="flex sticky top-0 bg-muted z-10">
             <div className="w-12 h-8 border border-border bg-muted flex items-center justify-center text-xs font-medium"></div>
-            {Array.from({ length: COLS }, (_, colIndex) => (
+            {Array.from({ length: cols }, (_, colIndex) => (
               <div
                 key={colIndex}
-                className="relative border border-border bg-muted flex items-center justify-center text-xs font-medium"
-                style={{ width: columnWidths[colIndex] || 96 }}
+                className="relative flex items-center justify-center border border-border text-xs font-medium cursor-pointer select-none"
+                style={{ width: columnWidths[colIndex] || 96 }} // w-24
+                onDoubleClick={() => setEditingColumn(colIndex)}
               >
-                {getColumnLetter(colIndex)}
-                {/* Column resize handle */}
-                <div
-                  className="absolute right-0 top-0 w-1 h-full cursor-col-resize hover:bg-blue-500 opacity-0 hover:opacity-100 transition-opacity"
-                  onMouseDown={(e) => handleResizeStart(e, "column", colIndex)}
-                />
+                {editingColumn === colIndex ? (
+                  <Input
+                    type="text"
+                    defaultValue={columnNames[colIndex] || getColumnLetter(colIndex)}
+                    onBlur={(e) => handleColumnRename(colIndex, e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleColumnRename(colIndex, e.currentTarget.value);
+                      } else if (e.key === "Escape") {
+                        setEditingColumn(null);
+                      }
+                    }}
+                    autoFocus
+                    className="w-full h-full text-center"
+                  />
+                ) : (
+                  <>
+                    {columnNames[colIndex] || getColumnLetter(colIndex)}
+                    <div
+                      className="absolute top-0 right-0 w-1 h-full cursor-col-resize bg-transparent hover:bg-blue-500"
+                      onMouseDown={(e) => handleResizeStart(e, "column", colIndex)}
+                    />
+                  </>
+                )}
               </div>
             ))}
           </div>
 
           {/* Data Rows */}
-          {Array.from({ length: ROWS }, (_, rowIndex) => (
+          {Array.from({ length: rows }, (_, rowIndex) => (
             <div key={rowIndex} className="flex relative">
               {/* Row Header */}
-              <div
-                className="w-12 border border-border bg-muted flex items-center justify-center text-xs font-medium sticky left-0 z-10 relative"
-                style={{ height: rowHeights[rowIndex] || 32 }}
-              >
+              <div className="relative w-12 h-8 flex items-center justify-center border border-border text-xs font-medium cursor-pointer select-none bg-muted sticky left-0 z-10">
                 {rowIndex + 1}
-                {/* Row resize handle */}
                 <div
-                  className="absolute bottom-0 left-0 w-full h-1 cursor-row-resize hover:bg-blue-500 opacity-0 hover:opacity-100 transition-opacity"
+                  className="absolute bottom-0 left-0 w-full h-1 cursor-row-resize bg-transparent hover:bg-blue-500"
                   onMouseDown={(e) => handleResizeStart(e, "row", rowIndex)}
                 />
               </div>
 
-              {/* Data Cells */}
-              {Array.from({ length: COLS }, (_, colIndex) => {
+              {/* Cells */}
+              {Array.from({ length: cols }, (_, colIndex) => {
                 const cellRef = getCellRef(colIndex, rowIndex);
                 const cellData = data[cellRef];
                 const isSelected = selectedCell === cellRef;
@@ -529,9 +558,8 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
                     ref={(el) => {
                       if (el) cellRefs.current[cellRef] = el;
                     }}
-                    className={`px-1 text-xs outline-none ${
-                      isSelected ? "border-2 border-blue-500 bg-blue-50" : "border border-border bg-background"
-                    }`}
+                    className={`px-1 text-xs outline-none ${isSelected ? "border-2 border-blue-500 bg-blue-50" : "border border-border bg-background"
+                      }`}
                     style={{
                       width: columnWidths[colIndex] || 96,
                       height: rowHeights[rowIndex] || 32,
@@ -553,8 +581,23 @@ export const DataTableSection = ({ isToolbarVisible }: DataTableSectionProps): J
               })}
             </div>
           ))}
+          {/* Add Rows Section */}
+          <div className="relative py-2 px-12 border-t flex items-center gap-2 sticky left-0 z-10 bg-muted">
+            <Input
+              type="number"
+              min="1"
+              value={numRowsToAdd}
+              onChange={(e) => setNumRowsToAdd(Number(e.target.value))}
+              className="w-24"
+              aria-label="Number of rows to add"
+            />
+            <Button className="bg-[#4b6a4f]" onClick={handleAddRows}>Add Rows</Button>
+            <span className="text-sm text-gray-500">number of rows to add</span>
+          </div>
         </div>
       </div>
+
+
 
       {/* Status Bar */}
       <Tabs
