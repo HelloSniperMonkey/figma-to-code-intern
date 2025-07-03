@@ -229,7 +229,7 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
   };
 
   // Apply formatting
-  const applyFormatting = (property: string, value: any) => {
+    const applyFormatting = (property: string, value: boolean | string | number | "left" | "center" | "right") => {
     setSheets((prevSheets) => {
       const newSheets = { ...prevSheets };
       const newSheet = { ...newSheets[activeSheet] };
