@@ -22,7 +22,7 @@ export const NewColumnModal = ({ isOpen, onClose, onAddColumn }: NewColumnModalP
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-0 z-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 z-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96 border border-gray-200">
         <h3 className="text-lg font-medium mb-4">Add New Column</h3>
         <Input 

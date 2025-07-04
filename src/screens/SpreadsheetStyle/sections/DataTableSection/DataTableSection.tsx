@@ -17,6 +17,8 @@ import {
   Redo,
   Copy,
   ClipboardPasteIcon as Paste,
+  Link,
+  RefreshCw,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
@@ -34,6 +36,7 @@ interface CellData {
     fontFamily?: string;
     backgroundColor?: string;
     textColor?: string;
+    fontWeight?: string;
   };
 }
 
@@ -59,8 +62,61 @@ interface DataTableSectionProps {
 }
 
 export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumnRename }: DataTableSectionProps): JSX.Element => {
+  // Seeded dummy data for first 5 rows and 9 columns
+  const initialSheetData: SpreadsheetData = {
+    // Row 1
+    "A1": { value: "Launch social media campaign for product XYZ" },
+    "B1": { value: "15-11-2024" },
+    "C1": { value: "In-process", style: { backgroundColor: '#fff7d6', textColor: '#8a6d1b', fontWeight: 'bold' } },
+    "D1": { value: "Aisha Patel" },
+    "E1": { value: "www.aishapatel.com" },
+    "F1": { value: "Sophie Choudhury" },
+    "G1": { value: "Medium", style: { textColor: '#b58900', fontWeight: 'bold' } },
+    "H1": { value: "20-11-2024" },
+    "I1": { value: "6,200,000" },
+    // Row 2
+    "A2": { value: "Update press kit for company redesign" },
+    "B2": { value: "28-10-2024" },
+    "C2": { value: "Need to start", style: { backgroundColor: '#e0e7ef', textColor: '#4b5563', fontWeight: 'bold' } },
+    "D2": { value: "Irfan Khan" },
+    "E2": { value: "www.irfankhanportfolio.com" },
+    "F2": { value: "Tejas Pandey" },
+    "G2": { value: "High", style: { textColor: '#d7263d', fontWeight: 'bold' } },
+    "H2": { value: "30-10-2024" },
+    "I2": { value: "3,500,000" },
+    // Row 3
+    "A3": { value: "Finalize user testing feedback for app update" },
+    "B3": { value: "05-12-2024" },
+    "C3": { value: "In-process", style: { backgroundColor: '#fff7d6', textColor: '#8a6d1b', fontWeight: 'bold' } },
+    "D3": { value: "Mark Johnson" },
+    "E3": { value: "www.markjohnsondesigns.com" },
+    "F3": { value: "Rachel Lee" },
+    "G3": { value: "Medium", style: { textColor: '#b58900', fontWeight: 'bold' } },
+    "H3": { value: "10-12-2024" },
+    "I3": { value: "4,750,000" },
+    // Row 4
+    "A4": { value: "Design new features for the website" },
+    "B4": { value: "10-01-2025" },
+    "C4": { value: "Complete", style: { backgroundColor: '#d6f5e7', textColor: '#217a4a', fontWeight: 'bold' } },
+    "D4": { value: "Emily Green" },
+    "E4": { value: "www.emilygreenart.com" },
+    "F4": { value: "Tom Wright" },
+    "G4": { value: "Low", style: { textColor: '#1e90ff', fontWeight: 'bold' } },
+    "H4": { value: "15-01-2025" },
+    "I4": { value: "5,900,000" },
+    // Row 5
+    "A5": { value: "Prepare financial report for Q4 (edited)" },
+    "B5": { value: "25-01-2025" },
+    "C5": { value: "Blocked", style: { backgroundColor: '#ffd6d6', textColor: '#b91c1c', fontWeight: 'bold' } },
+    "D5": { value: "Jessica Brown" },
+    "E5": { value: "www.jessicabrowncreative.com" },
+    "F5": { value: "Kevin Smith" },
+    "G5": { value: "Low", style: { textColor: '#1e90ff', fontWeight: 'bold' } },
+    "H5": { value: "30-01-2025" },
+    "I5": { value: "2,800,000" },
+  };
   const [sheets, setSheets] = useState<Sheets>({
-    Sheet1: { data: {}, history: [{}], historyIndex: 0 },
+    Sheet1: { data: initialSheetData, history: [initialSheetData], historyIndex: 0 },
   });
   const [activeSheet, setActiveSheet] = useState<string>("Sheet1");
   const [selectedCell, setSelectedCell] = useState<string>("A1");
@@ -286,7 +342,7 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
   const handleColumnResize = (colIndex: number, newWidth: number) => {
     setColumnWidths((prev) => ({
       ...prev,
-      [colIndex]: Math.max(50, newWidth), // Minimum width of 50px
+      [colIndex]: Math.max(100, newWidth), // Minimum width of 100px
     }));
   };
 
@@ -305,7 +361,7 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
     const startPos = type === "column" ? e.clientX : e.clientY;
     const startSize =
       type === "column"
-        ? columnWidths[index] || 96 // Default 24 * 4 = 96px (w-24)
+        ? columnWidths[index] || 176 // Default 24 * 4 = 96px (w-24)
         : rowHeights[index] || 32; // Default 8 * 4 = 32px (h-8)
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -384,8 +440,69 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
     setActiveSheet(newActiveSheet);
   };
 
+  // Add this helper function near the top of the component
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "In-process":
+        return "bg-yellow-100 text-yellow-800";
+      case "Need to start":
+        return "bg-gray-200 text-gray-700";
+      case "Complete":
+        return "bg-green-100 text-green-800";
+      case "Blocked":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-50 text-gray-700";
+    }
+  };
+
   return (
     <div className="flex flex-col bg-background" style={{ height: 'calc(100vh - 120px)' }}>
+      {/* Section Headers Row (ABC, Answer a question, Extract) */}
+      <div className="relative w-full">
+        {/* Absolutely positioned info bar */}
+        <div className="absolute left-12 top-0 flex items-center h-10 gap-2 px-3 bg-[#e2e2e2] border-b border-[#e0e0e0] rounded-tl z-20" style={{ minWidth: (columnWidths[0] || 176) + (columnWidths[1] || 176) + (columnWidths[2] || 176) + (columnWidths[3] || 176) }}>
+          <div className="flex items-center gap-1 bg-[#eeeeee] rounded px-2 py-1">
+            <img className="w-4 h-4" alt="Link" src="https://c.animaapp.com/mclmkdkf288FZk/img/link.svg" />
+            <span className="text-xs text-[#545454]">Q3 Financial Overview</span>
+          </div>
+          <img className="w-4 h-4 text-[#545454]" alt="Arrow sync" src="https://c.animaapp.com/mclmkdkf288FZk/img/arrow-sync.svg" />
+        </div>
+        {/* Section headers row, aligned with columns */}
+        <div className="flex w-full h-10 border-b border-[#e0e0e0] bg-white z-10">
+          {/* Row number column */}
+          <div className="w-12 h-10"></div>
+          {/* Job Request, Submitted, Status, Submitter, URL columns (no section) */}
+          <div className="h-10" style={{ width: (columnWidths[0] || 176) + (columnWidths[1] || 176) + (columnWidths[2] || 176) + (columnWidths[3] || 176) + (columnWidths[4] || 176) }}></div>
+          {/* ABC section */}
+          <div className="flex items-center h-10 px-3" style={{ width: columnWidths[5] || 176, background: '#e0ede2' }}>
+            <img className="w-4 h-4 mr-1" alt="Arrow split" src="https://c.animaapp.com/mclmkdkf288FZk/img/arrow-split.svg" />
+            <span className="text-[#505450] text-xs font-semibold truncate">ABC</span>
+            <button className="ml-auto p-0 bg-transparent border-none text-[#505450] hover:bg-[#d2e0d4] rounded w-5 h-5 flex items-center justify-center">
+              <img className="w-4 h-4" alt="More" src="https://c.animaapp.com/mclmkdkf288FZk/img/more.svg" />
+            </button>
+          </div>
+          {/* Answer a question section (Priority, Due Date) */}
+          <div className="flex items-center h-10 px-3" style={{ width: (columnWidths[6] || 176) + (columnWidths[7] || 176), background: '#cfc1fa' }}>
+            <img className="w-4 h-4 mr-1" alt="Arrow split" src="https://c.animaapp.com/mclmkdkf288FZk/img/arrow-split.svg" />
+            <span className="text-[#463e59] text-xs font-semibold truncate">Answer a question</span>
+            <button className="ml-auto p-0 bg-transparent border-none text-[#463e59] hover:bg-[#cfc1fa] rounded w-5 h-5 flex items-center justify-center">
+              <img className="w-4 h-4" alt="More" src="https://c.animaapp.com/mclmkdkf288FZk/img/more.svg" />
+            </button>
+          </div>
+          {/* Extract section (Est. Value) */}
+          <div className="flex items-center h-10 px-3" style={{ width: columnWidths[8] || 176, background: '#ffd6c9' }}>
+            <img className="w-4 h-4 mr-1" alt="Arrow split" src="https://c.animaapp.com/mclmkdkf288FZk/img/arrow-split.svg" />
+            <span className="text-[#695149] text-xs font-semibold truncate">Extract</span>
+            <button className="ml-auto p-0 bg-transparent border-none text-[#695149] hover:bg-[#ffd6c9] rounded w-5 h-5 flex items-center justify-center">
+              <img className="w-4 h-4" alt="More" src="https://c.animaapp.com/mclmkdkf288FZk/img/more.svg" />
+            </button>
+          </div>
+          {/* Add column button space */}
+          <div className="h-10 flex items-center justify-center" style={{ width: 126 }}></div>
+        </div>
+      </div>
+
       {isToolbarVisible && (
         <>
           {/* Toolbar */}
@@ -500,39 +617,66 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
           {/* Header Row */}
           <div className="flex sticky top-0 bg-muted z-10">
             <div className="w-12 h-8 border border-border bg-muted flex items-center justify-center text-xs font-medium"></div>
-            {Array.from({ length: cols }, (_, colIndex) => (
-              <div
-                key={colIndex}
-                className="relative flex items-center justify-center border border-border text-xs font-medium cursor-pointer select-none"
-                style={{ width: columnWidths[colIndex] || 96 }} // w-24
-                onDoubleClick={() => setEditingColumn(colIndex)}
-              >
-                {editingColumn === colIndex ? (
-                  <Input
-                    type="text"
-                    defaultValue={columnNames[colIndex] || getColumnLetter(colIndex)}
-                    onBlur={(e) => handleColumnRename(colIndex, e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleColumnRename(colIndex, e.currentTarget.value);
-                      } else if (e.key === "Escape") {
-                        setEditingColumn(null);
-                      }
-                    }}
-                    autoFocus
-                    className="w-full h-full text-center"
-                  />
-                ) : (
-                  <>
-                    {columnNames[colIndex] || getColumnLetter(colIndex)}
-                    <div
-                      className="absolute top-0 right-0 w-1 h-full cursor-col-resize bg-transparent hover:bg-blue-500"
-                      onMouseDown={(e) => handleResizeStart(e, "column", colIndex)}
+            {Array.from({ length: cols }, (_, colIndex) => {
+              // Hardcoded multi-color for certain columns
+              let bg = 'bg-[#eeeeee]';
+              let text = 'text-[#757575]';
+              let icon = null;
+              // Example: Assign colors/icons to columns by index
+              if (colIndex === 5) { // Assigned
+                bg = 'bg-[#e8f0e9]';
+                text = 'text-[#666c66]';
+                icon = <img className="w-4 h-4" alt="Emoji" src="https://c.animaapp.com/mclmkdkf288FZk/img/emoji.svg" />;
+              } else if (colIndex === 6 || colIndex === 7) { // Priority, Due Date
+                bg = 'bg-[#eae3fc]';
+                text = 'text-[#645c7f]';
+              } else if (colIndex === 8) { // Est. Value
+                bg = 'bg-[#ffe9e0]';
+                text = 'text-[#8c6b61]';
+              }
+              // Example icons for first few columns
+              if (colIndex === 0) icon = <img className="w-4 h-4" alt="Briefcase" src="https://c.animaapp.com/mclmkdkf288FZk/img/briefcase.svg" />;
+              if (colIndex === 1) icon = <img className="w-4 h-4" alt="Calendar" src="https://c.animaapp.com/mclmkdkf288FZk/img/calendar.svg" />;
+              if (colIndex === 2) icon = <img className="w-4 h-4" alt="Chevron circle" src="https://c.animaapp.com/mclmkdkf288FZk/img/chevron-circle.svg" />;
+              if (colIndex === 3) icon = <img className="w-4 h-4" alt="Person" src="https://c.animaapp.com/mclmkdkf288FZk/img/person.svg" />;
+              if (colIndex === 4) icon = <img className="w-4 h-4" alt="Globe" src="https://c.animaapp.com/mclmkdkf288FZk/img/globe.svg" />;
+              return (
+                <div
+                  key={colIndex}
+                  className={`relative flex items-center justify-center border border-border text-xs font-medium cursor-pointer select-none ${bg} ${text}`}
+                  style={{ width: columnWidths[colIndex] || 176 }}
+                  onDoubleClick={() => setEditingColumn(colIndex)}
+                >
+                  {editingColumn === colIndex ? (
+                    <Input
+                      type="text"
+                      defaultValue={columnNames[colIndex] || getColumnLetter(colIndex)}
+                      onBlur={(e) => handleColumnRename(colIndex, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleColumnRename(colIndex, e.currentTarget.value);
+                        } else if (e.key === "Escape") {
+                          setEditingColumn(null);
+                        }
+                      }}
+                      autoFocus
+                      className="w-full h-full text-center"
                     />
-                  </>
-                )}
-              </div>
-            ))}
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-1 w-full justify-center">
+                        {icon}
+                        {columnNames[colIndex] || getColumnLetter(colIndex)}
+                      </div>
+                      <div
+                        className="absolute top-0 right-0 w-1 h-full cursor-col-resize bg-transparent hover:bg-blue-500"
+                        onMouseDown={(e) => handleResizeStart(e, "column", colIndex)}
+                      />
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Data Rows */}
@@ -553,16 +697,36 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
                 const cellData = data[cellRef];
                 const isSelected = selectedCell === cellRef;
 
+                // Status column as pill
+                if (colIndex === 2) {
+                  return (
+                    <div
+                      key={cellRef}
+                      className={`flex items-center justify-center h-8 w-full ${isSelected ? "border-2 border-blue-500 bg-blue-50" : "border border-border bg-background"}`}
+                      style={{ width: columnWidths[colIndex] || 176, height: rowHeights[rowIndex] || 32 }}
+                      onClick={() => handleCellSelect(cellRef)}
+                    >
+                      <button
+                        className={`px-2 py-1 rounded-full text-xs font-medium cursor-pointer ${getStatusStyle(cellData?.value)}`}
+                        style={{ outline: "none", border: "none" }}
+                        tabIndex={-1}
+                      >
+                        {cellData?.value || ""}
+                      </button>
+                    </div>
+                  );
+                }
+
+                // All other columns as input
                 return (
                   <input
                     key={cellRef}
                     ref={(el) => {
                       if (el) cellRefs.current[cellRef] = el;
                     }}
-                    className={`px-1 text-xs outline-none ${isSelected ? "border-2 border-blue-500 bg-blue-50" : "border border-border bg-background"
-                      }`}
+                    className={`px-1 text-xs outline-none ${isSelected ? "border-2 border-blue-500 bg-blue-50" : "border border-border bg-background"}`}
                     style={{
-                      width: columnWidths[colIndex] || 96,
+                      width: columnWidths[colIndex] || 176,
                       height: rowHeights[rowIndex] || 32,
                       fontWeight: cellData?.style?.bold ? "bold" : "normal",
                       fontStyle: cellData?.style?.italic ? "italic" : "normal",
@@ -599,8 +763,6 @@ export const DataTableSection = ({ isToolbarVisible, cols, columnNames, onColumn
           </div>
         </div>
       </div>
-
-
 
       {/* Status Bar */}
       <Tabs

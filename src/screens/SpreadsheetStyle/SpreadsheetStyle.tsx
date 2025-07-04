@@ -5,8 +5,21 @@ import { NavigationBarSection } from "./sections/NavigationBarSection";
 
 export const SpreadsheetStyle = (): JSX.Element => {
   const [isToolbarVisible, setIsToolbarVisible] = useState(false);
-  const [cols, setCols] = useState(26); // Default to 26 columns (A-Z)
-  const [columnNames, setColumnNames] = useState<{ [key: number]: string }>({});
+
+  const initialColumnNames = {
+    0: "Job Request",
+    1: "Submitted",
+    2: "Status",
+    3: "Submitter",
+    4: "URL",
+    5: "Assigned",
+    6: "Priority",
+    7: "Due Date",
+    8: "Est. Value",
+    9: "+"
+  };
+  const [cols, setCols] = useState(Object.keys(initialColumnNames).length); // Default to 26 columns (A-Z)
+  const [columnNames, setColumnNames] = useState<{ [key: number]: string }>(initialColumnNames);
 
   const handleAddColumn = (name: string) => {
     const newColIndex = cols;
