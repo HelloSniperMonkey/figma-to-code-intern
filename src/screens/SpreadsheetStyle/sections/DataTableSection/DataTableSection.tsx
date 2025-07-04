@@ -353,7 +353,7 @@ export const DataTableSection = (): JSX.Element => {
 
       <div className="inline-flex items-center gap-px relative self-stretch flex-[0_0_auto]">
         {/* Header with link */}
-        <div className="flex w-[631px] h-8 items-center gap-2 p-2 absolute top-0 left-0 z-[4] bg-[#e2e2e2]">
+        <div className="flex w-[639px] h-8 items-center gap-2 p-2 absolute top-0 left-0 z-[4] bg-[#e2e2e2]">
           <div className="inline-flex items-center gap-1 p-1 relative flex-[0_0_auto] mt-[-4.00px] mb-[-4.00px] bg-[#eeeeee] rounded">
             <img
               className="relative w-4 h-4"
