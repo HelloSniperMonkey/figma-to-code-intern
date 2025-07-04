@@ -443,7 +443,10 @@ export const DataTableSection = (): JSX.Element => {
                 onClick={() => handleCellClick(index, "jobRequest")}
                 onDoubleClick={() => handleCellDoubleClick(index, "jobRequest")}
               >
-                <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
+                <div 
+                  className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)] truncate overflow-hidden"
+                  title={row.jobRequest} // Show full text on hover
+                >
                   {row.jobRequest}
                 </div>
               </div>
@@ -645,7 +648,10 @@ export const DataTableSection = (): JSX.Element => {
               }`}
               onClick={() => handleCellClick(index, "submitter")}
             >
-              <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
+              <div 
+                className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)] truncate overflow-hidden"
+                title={row.submitter} // Show full name on hover
+              >
                 {row.submitter}
               </div>
             </div>
@@ -698,11 +704,12 @@ export const DataTableSection = (): JSX.Element => {
             onClick={() => handleCellClick(index, "url")}
           >
             <button
-              className="relative flex-1 [font-family:'Work_Sans',Helvetica] font-normal text-[#121212] text-xs tracking-[0] leading-4 underline hover:text-blue-600 text-left"
+              className="relative flex-1 [font-family:'Work_Sans',Helvetica] font-normal text-[#121212] text-xs tracking-[0] leading-4 underline hover:text-blue-600 text-left truncate overflow-hidden"
               onClick={(e) => {
                 e.stopPropagation();
                 handleButtonClick("open-url", { url: row.url, row: index });
               }}
+              title={row.url} // Show full URL on hover
             >
               {row.url}
             </button>
@@ -720,9 +727,9 @@ export const DataTableSection = (): JSX.Element => {
 
       {/* Assigned Column */}
       <div className="flex flex-col w-[128px] items-start gap-px relative self-stretch">
-        <div className="justify-center gap-2 px-4 py-2 bg-[#d2e0d4] flex h-8 items-center relative self-stretch w-full">
+        <div className="justify-center gap-2 px-4 bg-[#d2e0d4] flex h-8 items-center relative self-stretch w-full">
           <button 
-            className="inline-flex items-center gap-1 px-1 py-0.5 relative flex-[0_0_auto] rounded hover:bg-green-200"
+            className="inline-flex items-center gap-1 px-1 py-0 relative flex-[0_0_auto] rounded hover:bg-green-200"
             onClick={() => handleButtonClick("abc-action")}
           >
             <img
@@ -771,7 +778,10 @@ export const DataTableSection = (): JSX.Element => {
             }`}
             onClick={() => handleCellClick(index, "assigned")}
           >
-            <div className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)]">
+            <div 
+              className="relative flex-1 font-paragraph-12-XS-regular-12-16 font-[number:var(--paragraph-12-XS-regular-12-16-font-weight)] text-[#121212] text-[length:var(--paragraph-12-XS-regular-12-16-font-size)] tracking-[var(--paragraph-12-XS-regular-12-16-letter-spacing)] leading-[var(--paragraph-12-XS-regular-12-16-line-height)] [font-style:var(--paragraph-12-XS-regular-12-16-font-style)] truncate overflow-hidden"
+              title={row.assigned} // Show full name on hover
+            >
               {row.assigned}
             </div>
           </div>
